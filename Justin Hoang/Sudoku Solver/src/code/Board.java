@@ -5,6 +5,7 @@ import java.util.Scanner;
 
 public class Board {
 	private Cell[][] board = new Cell[9][9];
+	private Cell[][][][]guesses = new Cell[9][9][][];
 	
 	//The variable "level" records the level of the puzzle being solved.
 	private String level = "";
@@ -20,6 +21,11 @@ public class Board {
 				board[x][y] = new Cell();
 				board[x][y].setBoxID( 3*(x/3) + (y)/3+1);
 			}
+		/*
+		for(int x = 0; x < 9; x++)
+			for(int y = 0 ; y < 9; y++)
+				guesses[x][y] = new Cell[1];
+				*/
 	}
 	
 
@@ -115,6 +121,9 @@ public class Board {
 	public void logicCycles()throws Exception
 	{
 		Scanner input = new Scanner(System.in);
+		int xcoord=0;
+		int ycoord=0;
+		int temp;
 		
 		while(isSolved() == false)
 		{
@@ -139,6 +148,25 @@ public class Board {
 				if(errorFound())
 					break;
 			}while(changesMade != 0);
+			if(!isSolved()) {
+				for(int x=0;x<9;x++) {
+					for(int y=0;y<9;y++) {
+						if(guesses[x][y]==null) {
+							xcoord=x;
+							ycoord=y;
+							x=9;
+							break;
+						}
+							
+					}
+				}
+				guesses[xcoord][ycoord]=board;
+				for(int x=0;x<9;x++) {
+					for(int y=0;y<9;y++) {
+						
+					}
+				}
+			}
 	
 		}			
 		
