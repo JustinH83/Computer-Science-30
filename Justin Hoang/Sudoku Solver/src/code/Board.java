@@ -5,7 +5,7 @@ import java.util.Scanner;
 
 public class Board {
 	private Cell[][] board = new Cell[9][9];
-	private Cell[][][][]guesses = new Cell[9][9][][];
+	private Board[][]guesses = new Board[9][9];
 	
 	//The variable "level" records the level of the puzzle being solved.
 	private String level = "";
@@ -73,6 +73,10 @@ public class Board {
 				if(board[x][y].numberOfPotentials() !=1)
 					return false;
 		return true;
+	}
+	
+	public Cell cellAt(int x, int y) {
+		return board[x][y];
 	}
 
 
@@ -145,27 +149,60 @@ public class Board {
 				display();
 				input.nextInt();
 				
-				if(errorFound())
+				if(errorFound()) {
+					System.out.println("error");
 					break;
+				}
 			}while(changesMade != 0);
-			if(!isSolved()) {
-				for(int x=0;x<9;x++) {
-					for(int y=0;y<9;y++) {
+			if(errorFound())
+				break;
+			while(!isSolved()) {
+				for(int x=0;x<9;x++) 
+					for(int y=0;y<9;y++) 
 						if(guesses[x][y]==null) {
 							xcoord=x;
 							ycoord=y;
 							x=9;
 							break;
 						}
-							
-					}
-				}
-				guesses[xcoord][ycoord]=board;
-				for(int x=0;x<9;x++) {
+				guesses[xcoord][ycoord] = new Board();
+				for(int x =0;x<9;x++)
 					for(int y=0;y<9;y++) {
-						
+						if(board[x][y].getNumber()!=0)
+							guesses[xcoord][ycoord].solve(x,y,board[x][y].getNumber());
 					}
-				}
+				System.out.println("Current board stored at (" + xcoord + "," + ycoord + ")");
+				for(int x=0;x<9;x++) 
+					for(int y=0;y<9;y++) 
+						if(board[x][y].getNumber()==0) {
+							System.out.println("Guess made at (" + x + "," + y + "). Guess was " + board[x][y].getFirstPotential());
+							solve(x,y,board[x][y].getFirstPotential());
+							logicCycles();
+							if(isSolved()) {
+								x=9;
+								break;
+							}
+							else {
+								board = new Cell[9][9];
+								for(int a = 0; a < 9; a++)
+									for(int b = 0 ; b < 9; b++)
+									{
+										board[a][b] = new Cell();
+										board[a][b].setBoxID( 3*(a/3) + (b)/3+1);
+									}
+								for(int a =0;a<9;a++)
+									for(int b=0;b<9;b++) 
+										if(guesses[xcoord][ycoord].cellAt(a, b).getNumber()!=0)
+											solve(a,b,guesses[xcoord][ycoord].cellAt(a,b).getNumber());
+								board[x][y].cantBe(board[x][y].getFirstPotential());
+								System.out.println("Cell at (" + x + "," + y + ") cant be " + board[x][y].getFirstPotential());
+								guesses[xcoord][ycoord]=null;
+								x=9;
+								break;
+							}
+						}
+					
+				
 			}
 	
 		}			
@@ -187,7 +224,6 @@ public class Board {
 					solve(a,b,board[a][b].getFirstPotential());
 					changesMade++;
 				}
-		System.out.println("changes made: " + changesMade);
 		return changesMade;
 					
 	}
@@ -249,7 +285,6 @@ public class Board {
 					changesMade++;
 				}
 			}
-		System.out.println("changes made: " + changesMade);
 		return changesMade;
 	}
 	
@@ -291,7 +326,6 @@ public class Board {
 						changesMade++;
 					}
 				}
-		System.out.println("changes made: " + changesMade);
 		return changesMade;
 	}
 	
@@ -321,16 +355,13 @@ public class Board {
 				multiple = false;
 				for(int b=++temp;b<9;b++) {
 					if(board[a][b].numberOfPotentials()==2 && multiple == false) {
-						System.out.println("First Instance at: (" + a + "," + b + ")");
 						temp = b;
 						multiple = true;
 					}
 					else if(board[a][b].numberOfPotentials()==2 && multiple == true  && board[a][temp].getFirstPotential() == board[a][b].getFirstPotential() && board[a][temp].getSecondPotential() == board[a][b].getSecondPotential()) { 
-						System.out.println("Second Instance at: (" + a + "," + b + ")");
 						for(int z = 0;z<9;z++) {
 							if(board[a][z].getNumber()==0)
 								if(board[a][z].numberOfPotentials()!=2 || board[a][z].getFirstPotential()!=board[a][b].getFirstPotential() || board[a][z].getSecondPotential()!=board[a][b].getSecondPotential()) {
-									System.out.println("cell at (" + a + "," + z + ") cant be " + board[a][b].getFirstPotential() + " and " + board[a][b].getSecondPotential());
 									board[a][z].cantBe(board[a][b].getFirstPotential());
 									board[a][z].cantBe(board[a][b].getSecondPotential());
 									changesMade++;
@@ -347,16 +378,13 @@ public class Board {
 				multiple = false;
 				for(int a=++temp;a<9;a++) {
 					if(board[a][b].numberOfPotentials()==2 && multiple == false) {
-						System.out.println("First Instance at: (" + a + "," + b + ")");
 						temp = a;
 						multiple = true;
 					}
-					else if(board[a][b].numberOfPotentials()==2 && multiple == true && board[temp][b].getFirstPotential() == board[a][b].getFirstPotential() && board[temp][b].getSecondPotential() == board[a][b].getSecondPotential()) { 
-						System.out.println("Second Instance at: (" + a + "," + b + ")");
+					else if(board[a][b].numberOfPotentials()==2 && multiple == true && board[temp][b].getFirstPotential() == board[a][b].getFirstPotential() && board[temp][b].getSecondPotential() == board[a][b].getSecondPotential()) {
 						for(int z = 0;z<9;z++) {
 							if(board[z][b].getNumber()==0)
 								if(board[z][b].numberOfPotentials()!=2 || board[z][b].getFirstPotential()!=board[a][b].getFirstPotential() || board[z][b].getSecondPotential()!=board[a][b].getSecondPotential()) {
-									System.out.println("cell at (" + z + "," + b + ") cant be " + board[a][b].getFirstPotential() + " and " + board[a][b].getSecondPotential());
 									board[z][b].cantBe(board[a][b].getFirstPotential());
 									board[z][b].cantBe(board[a][b].getSecondPotential());
 									changesMade++;
@@ -366,7 +394,6 @@ public class Board {
 				}
 			}while(temp<8);
 		}
-		System.out.println("changes made: " + changesMade);
 		return changesMade;
 	}
 	
