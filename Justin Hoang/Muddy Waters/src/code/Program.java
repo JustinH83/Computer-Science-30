@@ -82,8 +82,8 @@ public class Program {
 		// TODO Auto-generated method stub
 		int[][] board = new int[22][22];
 		int number;
-		int max=0;
-		int greed =0;
+		int max=100;
+		int greed =100;
 		int greedTemp = 0;
 		int temp;
 		Scanner input = new Scanner(System.in);
@@ -105,16 +105,13 @@ public class Program {
 		for(int x = 1;x<21;x++) {
 			temp = flood(x,1,board);
 			greedTemp = greed(x,board);
-			System.out.println("");
-			System.out.println("Greed: " + greedTemp);
-			System.out.println("Optimal: " + temp);
-			if(greed<greedTemp)
+			if(greed>greedTemp)
 				greed = greedTemp;
-			if(temp>max)
+			if(temp<max)
 				max = temp;
 		}
-		System.out.println(max);
-		System.out.println(greed);
+		System.out.println("Optimal: " + max);
+		System.out.println("greed: " + greed);
 	}
 
 }
