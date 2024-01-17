@@ -166,10 +166,15 @@ public class Board {
 							break;
 						}
 				guesses[xcoord][ycoord] = new Board();
+				//putting board into a save
 				for(int x =0;x<9;x++)
 					for(int y=0;y<9;y++) {
 						if(board[x][y].getNumber()!=0)
 							guesses[xcoord][ycoord].solve(x,y,board[x][y].getNumber());
+						else
+							for(int m=1;m<10;m++)
+								if(guesses[xcoord][ycoord].cellAt(x, y).getPotential()[m]!=board[x][y].getPotential()[m])
+									guesses[xcoord][ycoord].cellAt(x, y).cantBe(m);
 					}
 				System.out.println("Current board stored at (" + xcoord + "," + ycoord + ")");
 				for(int x=0;x<9;x++) 
@@ -178,11 +183,7 @@ public class Board {
 							System.out.println("Guess made at (" + x + "," + y + "). Guess was " + board[x][y].getFirstPotential());
 							solve(x,y,board[x][y].getFirstPotential());
 							logicCycles();
-							if(isSolved()) {
-								x=9;
-								break;
-							}
-							else {
+							if(!isSolved() || errorFound()){
 								board = new Cell[9][9];
 								for(int a = 0; a < 9; a++)
 									for(int b = 0 ; b < 9; b++)
@@ -190,16 +191,22 @@ public class Board {
 										board[a][b] = new Cell();
 										board[a][b].setBoxID( 3*(a/3) + (b)/3+1);
 									}
+								//coping save to the board
 								for(int a =0;a<9;a++)
-									for(int b=0;b<9;b++) 
+									for(int b=0;b<9;b++) {
 										if(guesses[xcoord][ycoord].cellAt(a, b).getNumber()!=0)
 											solve(a,b,guesses[xcoord][ycoord].cellAt(a,b).getNumber());
-								board[x][y].cantBe(board[x][y].getFirstPotential());
+										else
+											for(int m=1;m<10;m++)
+												if(guesses[xcoord][ycoord].cellAt(x, y).getPotential()[m]!=board[x][y].getPotential()[m])
+													board[x][y].cantBe(m);
+									}
 								System.out.println("Cell at (" + x + "," + y + ") cant be " + board[x][y].getFirstPotential());
+								board[x][y].cantBe(board[x][y].getFirstPotential());
 								guesses[xcoord][ycoord]=null;
-								x=9;
-								break;
 							}
+							x=9;
+							break;
 						}
 					
 				
