@@ -124,7 +124,6 @@ public class Board {
 	//logicCycles() continuously cycles through the different logic algorithms until no more changes are being made.
 	public void logicCycles()throws Exception
 	{
-		Scanner input = new Scanner(System.in);
 		int xcoord=0;
 		int ycoord=0;
 		int temp;
@@ -136,23 +135,11 @@ public class Board {
 			{
 				changesMade = 0;
 				changesMade += logic1();
-				display();
-				input.nextInt();
 				changesMade += logic2();
-				display();
-				input.nextInt();
 				changesMade += logic3();
-				display();
-				input.nextInt();
-				
 				changesMade += logic4();
-				display();
-				input.nextInt();
-				
-				if(errorFound()) {
-					System.out.println("error");
+				if(errorFound()) 
 					break;
-				}
 			}while(changesMade != 0);
 			if(errorFound())
 				break;
@@ -176,11 +163,9 @@ public class Board {
 								if(guesses[xcoord][ycoord].cellAt(x, y).getPotential()[m]!=board[x][y].getPotential()[m])
 									guesses[xcoord][ycoord].cellAt(x, y).cantBe(m);
 					}
-				System.out.println("Current board stored at (" + xcoord + "," + ycoord + ")");
 				for(int x=0;x<9;x++) 
 					for(int y=0;y<9;y++) 
 						if(board[x][y].getNumber()==0) {
-							System.out.println("Guess made at (" + x + "," + y + "). Guess was " + board[x][y].getFirstPotential());
 							solve(x,y,board[x][y].getFirstPotential());
 							logicCycles();
 							if(!isSolved() || errorFound()){
@@ -201,7 +186,6 @@ public class Board {
 												if(guesses[xcoord][ycoord].cellAt(x, y).getPotential()[m]!=board[x][y].getPotential()[m])
 													board[x][y].cantBe(m);
 									}
-								System.out.println("Cell at (" + x + "," + y + ") cant be " + board[x][y].getFirstPotential());
 								board[x][y].cantBe(board[x][y].getFirstPotential());
 								guesses[xcoord][ycoord]=null;
 							}
@@ -223,7 +207,6 @@ public class Board {
 	 */
 	public int logic1()
 	{
-		System.out.println("Logic 1: ");
 		int changesMade = 0;
 		for(int a=0;a<9;a++) 
 			for(int b=0;b<9;b++) 
@@ -243,7 +226,6 @@ public class Board {
 	
 	public int logic2()
 	{
-		System.out.println("Logic 2: ");
 		int changesMade = 0;
 		boolean contains;
 		boolean change;
@@ -301,7 +283,6 @@ public class Board {
 	 */
 	public int logic3()
 	{
-		System.out.println("Logic 3: ");
 		int changesMade = 0;
 		boolean contains;
 		boolean change;
@@ -351,7 +332,6 @@ public class Board {
 		 */
 	public int logic4()
 	{
-		System.out.println("Logic 4: ");
 		int changesMade = 0;
 		int temp;
 		boolean multiple;
